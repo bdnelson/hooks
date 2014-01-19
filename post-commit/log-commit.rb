@@ -3,6 +3,19 @@
 require 'rubygems'
 require 'git'
 
+# Open git repository.  If it fails on the first try, go to the parent
+# directory of the current location and try again (case where the project
+# is in a subdirectory and the tool - e.g. IntelliJ IDEA - is using the 
+# project directory as the root of execution).  
+@git = Git.open(`pwd`.chomp) rescue nil
+if @git.nil?
+  @git = Git.open(`pwd`.chomp + "/../") rescue nil
+  if @git.nil? 
+    puts "ERROR: Unable to open git repository in '#{`pwd`}' or its parent directory."
+    exit
+  end
+end
+
 # Grab last commit
 #   @git.dir - source directory
 #   @git.branch.name - current branch name
@@ -12,17 +25,13 @@ require 'git'
 #   @last_commit.message
 #   @last_commit.author [.name, .email, .date]
 #   @last_commit.committer [.name, .email, .date]
-
-@git = Git.open(`pwd`.chomp) rescue nil
-if @git.nil?
-  @git = Git.open(`pwd`.chomp + "/../")
-end
-
 @last_commit = @git.log.first
+
+# Other info we need
 @snapshot_time = Time.now.to_i
 @home_directory = "/Users/bdnelson"
 
-# Break up repo 
+# Break up repo path for tracking
 @repo = @git.dir.path.gsub("#{@home_directory}/", "")
 @repo = @repo.gsub("src/", "")
 
@@ -44,6 +53,7 @@ end
 snapshot_file="#{@home_directory}/.gitshots/#{@snapshot_time}-#{@last_commit.sha}.jpg"
 system "imagesnap -q -w 3 #{snapshot_file} &"
 
-`say 'Commit logging complete'`
+# Vocalization of completion - handy for testing but annoying otherwise
+#`say 'Commit logging complete'`
 
 exit 0
