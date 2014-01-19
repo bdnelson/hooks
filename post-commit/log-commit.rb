@@ -12,7 +12,12 @@ require 'git'
 #   @last_commit.message
 #   @last_commit.author [.name, .email, .date]
 #   @last_commit.committer [.name, .email, .date]
-@git = Git.open(`pwd`.chomp)
+
+@git = Git.open(`pwd`.chomp) rescue nil
+if @git.nil?
+  @git = Git.open(`pwd`.chomp + "/../")
+end
+
 @last_commit = @git.log.first
 @snapshot_time = Time.now.to_i
 @home_directory = "/Users/bdnelson"
@@ -39,6 +44,6 @@ end
 snapshot_file="#{@home_directory}/.gitshots/#{@snapshot_time}-#{@last_commit.sha}.jpg"
 system "imagesnap -q -w 3 #{snapshot_file} &"
 
-#`say 'Commit logging complete'`
+`say 'Commit logging complete'`
 
 exit 0
