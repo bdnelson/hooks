@@ -6,5 +6,5 @@ echo "Recording stats"
 commit_hash=`git rev-parse HEAD`
 repo_url=`git config --get remote.origin.url`
 commit_date=`git log -1 --format=%cd`
-commit_data="\"{ \"date\": \"\$commit_date\", \"url\": \"\$repo_url\", \"hash\": \"\$commit_hash\" }\""
-git-stats --record "\$commit_data"
+commit_data="\"{ \"date\": \"$commit_date\", \"url\": \"$repo_url\", \"hash\": \"$commit_hash\" }\""
+git-stats --record "$commit_data"
