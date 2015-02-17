@@ -56,4 +56,6 @@ system "imagesnap -q -w 3 #{snapshot_file} &"
 # Vocalization of completion - handy for testing but annoying otherwise
 #`say 'Commit logging complete'`
 
+put "Snapshot captured"
+
 exit 0
